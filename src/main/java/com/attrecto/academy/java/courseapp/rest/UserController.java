@@ -15,12 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.attrecto.academy.java.courseapp.model.dto.CourseDto;
-import com.attrecto.academy.java.courseapp.model.dto.CreateCourseDto;
 import com.attrecto.academy.java.courseapp.model.dto.CreateUserDto;
 import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
-//import com.attrecto.academy.java.courseapp.model.dto.UserDto;
-import com.attrecto.academy.java.courseapp.service.AccountService;
 import com.attrecto.academy.java.courseapp.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,20 +47,20 @@ public class UserController {
     	return userService.getUserById(id);
     }
     
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    @Operation(summary = "Create a new user" ,security = {@SecurityRequirement(name = "token")})
-//    public MinimalUserDto createUser(@Valid @RequestBody CreateUserDto createUserDto) {
-//    	return userService.createUser(createUserDto);
-//    }
-//    
-//    @PutMapping(value= "/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    @Operation(summary = "Update an existing user" ,security = {@SecurityRequirement(name = "token")})
-//    public MinimalUserDto updateUser(@PathVariable final Integer id, @Valid @RequestBody CreateUserDto createUserDto) {
-//    	return userService.updateUser(id, createUserDto);
-//    }    
-//    
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Create a new user" ,security = {@SecurityRequirement(name = "token")})
+    public MinimalUserDto createUser(@Valid @RequestBody CreateUserDto createUserDto) {
+    	return userService.createUser(createUserDto);
+    }
+    
+    @PutMapping(value= "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update an existing user" ,security = {@SecurityRequirement(name = "token")})
+    public MinimalUserDto updateUser(@PathVariable final Integer id, @Valid @RequestBody CreateUserDto createUserDto) {
+    	return userService.updateUser(id, createUserDto);
+    }    
+    
     @DeleteMapping(value= "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete an existing user" ,security = {@SecurityRequirement(name = "token")})
