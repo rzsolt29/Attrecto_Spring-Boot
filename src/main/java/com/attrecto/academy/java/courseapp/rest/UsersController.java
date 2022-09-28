@@ -43,11 +43,20 @@ public class UsersController {
 	
 	@GetMapping(value= "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get an user by id", security = {@SecurityRequirement(name = "token")})
+    @Operation(summary = "Get a user by id", security = {@SecurityRequirement(name = "token")})
     public UserDto getUserById(@PathVariable final Integer id) {
     	return userService.getUserById(id);
     }
 
+	@GetMapping(value="/{id}/{filter}")
+	@ResponseStatus(HttpStatus.OK)
+	 @Operation(summary = "Get a user by id and name", security = {@SecurityRequirement(name = "token")})
+    public List<UserDto> getUserByIdAndName(@PathVariable final Integer id, @PathVariable final String filter) {
+		
+		return userService.listUsersByIdAndName(id, filter);
+    }
+
+	
 	@PostMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create a new user", security = {@SecurityRequirement(name = "token")})

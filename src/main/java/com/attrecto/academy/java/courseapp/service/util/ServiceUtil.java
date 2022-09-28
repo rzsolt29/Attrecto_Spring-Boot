@@ -47,4 +47,10 @@ public class ServiceUtil {
 			return minimalCourseDto;
 		}).collect(Collectors.toList());
 	}
+	public List<User> listUsersByIdAndName(Integer id, String name){
+		List<User> userList =null;
+		
+		return userList;
+	}
+	
 }

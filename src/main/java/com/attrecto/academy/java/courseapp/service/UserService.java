@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.attrecto.academy.java.courseapp.model.Course;
 import com.attrecto.academy.java.courseapp.model.Role;
@@ -55,6 +56,29 @@ public class UserService {
 
 		return userDto;
 	}
+	
+    public List<UserDto> listUsersByIdAndName(@PathVariable final Integer id, @PathVariable final String filter) {
+    	List<User> users = serviceUtil.listUsersByIdAndName(id,filter);
+    	List<UserDto> userDtos=null;
+    	userDtos = users.stream().map(user -> {
+			List<MinimalCourseDto> minimalCoursesDto = serviceUtil.listUserCourses(user);
+
+			UserDto userDto = new UserDto();
+			userDto.setId(user.getId());
+			userDto.setName(user.getName());
+			userDto.setEmail(user.getEmail());
+			userDto.setCourses(minimalCoursesDto);
+			return userDto;
+		}).collect(Collectors.toList());
+		
+		return userDtos;
+    	
+    	
+    	
+    	
+    }
+
+
 
 	public UserDto updateUser(int id, UpdateUserDto updateUserDto) {
 		List<Course> courses = updateUserDto.getCourses().stream()
