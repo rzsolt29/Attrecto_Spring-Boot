@@ -1,25 +1,15 @@
 package com.attrecto.academy.java.courseapp.model.dto;
 
-import java.util.List;
-
-public class CourseDto {
-	private Integer id;
+public class MinimalCourseDto {
+	private int id;
 	private String title;
 	private String description;
 	private String url;
-	private Integer authorId;
-	private List<MinimalUserDto> students;
-
-	public List<MinimalUserDto> getStudents() {
-		return students;
-	}
-	public void setStudents(List<MinimalUserDto> students) {
-		this.students = students;
-	}
-	public Integer getId() {
+	
+	public int getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getTitle() {
@@ -39,11 +29,5 @@ public class CourseDto {
 	}
 	public void setUrl(String url) {
 		this.url = url;
-	}
-	public Integer getAuthorId() {
-		return authorId;
-	}
-	public void setAuthorId(Integer authorId) {
-		this.authorId = authorId;
 	}
 }

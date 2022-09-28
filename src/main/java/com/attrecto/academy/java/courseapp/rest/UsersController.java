@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attrecto.academy.java.courseapp.model.dto.CreateUserDto;
-import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
+import com.attrecto.academy.java.courseapp.model.dto.UpdateUserDto;
+import com.attrecto.academy.java.courseapp.model.dto.UserDto;
 import com.attrecto.academy.java.courseapp.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,46 +26,47 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "User API")
-public class UserController {
+@Tag(name = "Users API")
+public class UsersController {
 	private UserService userService;
-
-	public UserController(UserService userService) {
+	
+    public UsersController(UserService userService) {
 		this.userService = userService;
 	}
-	
+
 	@GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "List all users" ,security = {@SecurityRequirement(name = "token")})
-    public List<MinimalUserDto> getAllUser() {
-    	return userService.listAllUsers();
+    @Operation(summary = "List all user" ,security = {@SecurityRequirement(name = "token")})
+    public List<UserDto> getAllUser() {
+    	return userService.listUsers();
     }
-    
-    @GetMapping(value= "/{id}")
+	
+	@GetMapping(value= "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get a user by id" ,security = {@SecurityRequirement(name = "token")})
-    public MinimalUserDto getUserById(@PathVariable final Integer id) {
+    @Operation(summary = "Get an user by id", security = {@SecurityRequirement(name = "token")})
+    public UserDto getUserById(@PathVariable final Integer id) {
     	return userService.getUserById(id);
     }
-    
-    @PostMapping
+
+	@PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Create a new user" ,security = {@SecurityRequirement(name = "token")})
-    public MinimalUserDto createUser(@Valid @RequestBody CreateUserDto createUserDto) {
+    @Operation(summary = "Create a new user", security = {@SecurityRequirement(name = "token")})
+    public UserDto createUser(@Valid @RequestBody final CreateUserDto createUserDto) {
     	return userService.createUser(createUserDto);
     }
-    
-    @PutMapping(value= "/{id}")
+
+	@PutMapping(value= "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update an existing user" ,security = {@SecurityRequirement(name = "token")})
-    public MinimalUserDto updateUser(@PathVariable final Integer id, @Valid @RequestBody CreateUserDto createUserDto) {
-    	return userService.updateUser(id, createUserDto);
-    }    
-    
-    @DeleteMapping(value= "/{id}")
+    @Operation(summary = "Update an existing user", security = {@SecurityRequirement(name = "token")})
+    public UserDto updateUser(@PathVariable final Integer id, @Valid @RequestBody final UpdateUserDto updateUserDto) {
+    	return userService.updateUser(id, updateUserDto);
+    }
+
+	@DeleteMapping(value= "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete an existing user" ,security = {@SecurityRequirement(name = "token")})
+    @Operation(summary = "Delete an existing user", security = {@SecurityRequirement(name = "token")})
     public void deleteUser(@PathVariable final Integer id) {
     	userService.deleteUser(id);
-    }        
+    }
+
 }

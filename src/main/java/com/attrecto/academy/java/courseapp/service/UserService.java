@@ -1,68 +1,110 @@
 package com.attrecto.academy.java.courseapp.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.attrecto.academy.java.courseapp.model.dto.CourseDto;
-import com.attrecto.academy.java.courseapp.model.dto.CreateCourseDto;
+import com.attrecto.academy.java.courseapp.model.Course;
+import com.attrecto.academy.java.courseapp.model.Role;
+import com.attrecto.academy.java.courseapp.model.User;
 import com.attrecto.academy.java.courseapp.model.dto.CreateUserDto;
-import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
+import com.attrecto.academy.java.courseapp.model.dto.MinimalCourseDto;
+import com.attrecto.academy.java.courseapp.model.dto.UpdateUserDto;
+import com.attrecto.academy.java.courseapp.model.dto.UserDto;
+import com.attrecto.academy.java.courseapp.persistence.UserRepository;
+import com.attrecto.academy.java.courseapp.service.util.ServiceUtil;
 
 @Service
 public class UserService {
+	private UserRepository userRepository;
+	private ServiceUtil serviceUtil;
 
-	private MinimalUserDto firstUser;
-	private MinimalUserDto secondUser;
+	@Autowired
+	public UserService(final UserRepository userRepository, final ServiceUtil serviceUtil) {
+		this.userRepository = userRepository;
+		this.serviceUtil = serviceUtil;
+	}
 
-	
-	//TODO:Fiktív kurzusok és userek létrehozása
-	public UserService() {
-		firstUser = new MinimalUserDto();
-		firstUser.setId(1);
-		firstUser.setName("firstUser");
-		firstUser.setEmail("firstUser@attrecto.com");
+	public List<UserDto> listUsers() {
+		List<User> users = userRepository.findAll();
+		List<UserDto> userDtos = users.stream().map(user -> {
+			List<MinimalCourseDto> minimalCoursesDto = serviceUtil.listUserCourses(user);
+
+			UserDto userDto = new UserDto();
+			userDto.setId(user.getId());
+			userDto.setName(user.getName());
+			userDto.setEmail(user.getEmail());
+			userDto.setCourses(minimalCoursesDto);
+			return userDto;
+		}).collect(Collectors.toList());
+
+		return userDtos;
+	}
+
+	public UserDto getUserById(final int id) {
+		User user = serviceUtil.findUserById(id);
+
+		UserDto userDto = new UserDto();
+		userDto.setId(id);
+		userDto.setName(user.getName());
+		userDto.setEmail(user.getEmail());
+		userDto.setCourses(serviceUtil.listUserCourses(user));
+
+		return userDto;
+	}
+
+	public UserDto updateUser(int id, UpdateUserDto updateUserDto) {
+		List<Course> courses = updateUserDto.getCourses().stream()
+				.map(courseId -> serviceUtil.findCourseById(courseId)).collect(Collectors.toList());
+
+		User user = serviceUtil.findUserById(id);
+		user.setName(updateUserDto.getName());
+		user.setEmail(updateUserDto.getEmail());
+		user.setPassword(updateUserDto.getPassword());
+		user.setRole(updateUserDto.getRole());
+		user.setCourses(courses);
+		userRepository.save(user);
+
+		UserDto userDto = new UserDto();
+		userDto.setId(id);
+		userDto.setName(updateUserDto.getName());
+		userDto.setEmail(updateUserDto.getEmail());
+		userDto.setCourses(user.getCourses().stream().map(course -> {
+			MinimalCourseDto minimalCourseDto = new MinimalCourseDto();
+			minimalCourseDto.setId(course.getId());
+			minimalCourseDto.setTitle(course.getTitle());
+			minimalCourseDto.setUrl(course.getUrl());
+			minimalCourseDto.setDescription(course.getDescription());
+			return minimalCourseDto;
+		}).collect(Collectors.toList()));
+
+		return userDto;
+	}
+
+	public UserDto createUser(CreateUserDto createUserDto) {
+		User user = new User();
+		user.setName(createUserDto.getName());
+		user.setPassword(createUserDto.getPassword());
+		user.setEmail(createUserDto.getEmail());
+		user.setRole(Role.USER.name());
+		user.setCourses(new ArrayList<>());
+
+		user = userRepository.save(user);
+
+		final UserDto userDto = new UserDto();
+		userDto.setId(user.getId());
+		userDto.setName(user.getName());
+		userDto.setEmail(user.getEmail());
+
+		return userDto;
+	}
+
+	public void deleteUser(final int id) {
+		serviceUtil.findUserById(id);
 		
-		secondUser = new MinimalUserDto();
-		secondUser.setId(2);
-		secondUser.setName("secondUser");
-		secondUser.setEmail("secondUser@attrecto.com");
-		
-	}
-
-	//TODO: Teszt célból a valós felhasználók helyett egyenlőre két fiktív kurzust adunk vissza
-	public List<MinimalUserDto> listAllUsers() {
-		return new ArrayList<>(Arrays.asList(firstUser, secondUser));
-	}
-
-	//TODO: Teszt célból a valós felhasználó helyett egyenlőre egy fiktív kurzust adunk vissza
-	public MinimalUserDto getUserById(Integer id) {
-		return firstUser;
-	}
-
-	//TODO: Teszt célból a valós felhasználó helyett egyenlőre egy fiktív kurzust "hozunk létre" és térünk vele vissza
-	public MinimalUserDto createUser(CreateUserDto createUserDto) {
-		MinimalUserDto newUserDto = new MinimalUserDto();
-		newUserDto.setId(4);
-		newUserDto.setName("New Name");
-		newUserDto.setEmail("newuseremail@attrecto.com");
-		return newUserDto;
-	}
-
-	//TODO: Teszt célból a valós felhasználó helyett egyenlőre egy fiktív felhasználót módosítunk és térünk vele vissza
-	public MinimalUserDto updateUser(Integer id, CreateUserDto createUserDto) {
-		MinimalUserDto updatedUserDto = new MinimalUserDto();
-		updatedUserDto.setId(4);
-		updatedUserDto.setName("New Name");
-		updatedUserDto.setEmail("newuseremail@attrecto.com");
-
-		return updatedUserDto;
-	}
-
-	//TODO: Teszt célból a valós felhasználó törlése helyett nem csinálunk egyenlőre semmit
-	public void deleteUser(Integer id) {
+		userRepository.deleteById(id);
 	}
 }
