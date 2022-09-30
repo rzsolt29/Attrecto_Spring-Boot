@@ -57,25 +57,22 @@ public class UserService {
 		return userDto;
 	}
 	
-    public List<UserDto> listUsersByIdAndName(@PathVariable final Integer id, @PathVariable final String filter) {
-    	List<User> users = serviceUtil.listUsersByIdAndName(id,filter);
-    	List<UserDto> userDtos=null;
-    	userDtos = users.stream().map(user -> {
+    public List<UserDto> listUsersByName(@PathVariable final Integer id, @PathVariable final String filter) {
+    	List<User> users = userRepository.findAll();
+    	//List<User> users = serviceUtil.listUsersByName(id,filter);
+    	List<UserDto> userDtos = users.stream().map(user -> {
 			List<MinimalCourseDto> minimalCoursesDto = serviceUtil.listUserCourses(user);
-
+			if(user.getName().contains(filter.toLowerCase())) {
 			UserDto userDto = new UserDto();
 			userDto.setId(user.getId());
 			userDto.setName(user.getName());
 			userDto.setEmail(user.getEmail());
 			userDto.setCourses(minimalCoursesDto);
-			return userDto;
+			return userDto;}
+			return null;
 		}).collect(Collectors.toList());
 		
 		return userDtos;
-    	
-    	
-    	
-    	
     }
 
 

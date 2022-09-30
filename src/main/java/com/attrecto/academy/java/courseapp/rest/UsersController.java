@@ -50,10 +50,10 @@ public class UsersController {
 
 	@GetMapping(value="/{id}/{filter}")
 	@ResponseStatus(HttpStatus.OK)
-	 @Operation(summary = "Get a user by id and name", security = {@SecurityRequirement(name = "token")})
-    public List<UserDto> getUserByIdAndName(@PathVariable final Integer id, @PathVariable final String filter) {
+	 @Operation(summary = "Get a user by name", security = {@SecurityRequirement(name = "token")})
+    public List<UserDto> getUserByName(@PathVariable final Integer id, @PathVariable final String filter) {
 		
-		return userService.listUsersByIdAndName(id, filter);
+		return userService.listUsersByName(id, filter);
     }
 
 	
