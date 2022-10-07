@@ -1,7 +1,9 @@
 package com.attrecto.academy.java.courseapp.model;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,11 +16,12 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String email;
+	@Column(unique=true)
 	private String name;
 	private String password;
-	@ManyToMany
-	private List<Course> courses;
-	private String role;
+	@ManyToMany(mappedBy = "students")
+	private Set<Course> courses = new HashSet<>();
+	private Role role;
 	
 	public Integer getId() {
 		return id;
@@ -44,16 +47,16 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public List<Course> getCourses() {
+	public Set<Course> getCourses() {
 		return courses;
 	}
-	public void setCourses(List<Course> courses) {
+	public void setCourses(Set<Course> courses) {
 		this.courses = courses;
 	}
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 }

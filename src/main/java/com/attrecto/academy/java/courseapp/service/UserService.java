@@ -1,108 +1,68 @@
 package com.attrecto.academy.java.courseapp.service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import com.attrecto.academy.java.courseapp.mapper.UserMapper;
 import com.attrecto.academy.java.courseapp.model.Course;
 import com.attrecto.academy.java.courseapp.model.Role;
 import com.attrecto.academy.java.courseapp.model.User;
 import com.attrecto.academy.java.courseapp.model.dto.CreateUserDto;
-import com.attrecto.academy.java.courseapp.model.dto.MinimalCourseDto;
 import com.attrecto.academy.java.courseapp.model.dto.UpdateUserDto;
 import com.attrecto.academy.java.courseapp.model.dto.UserDto;
+import com.attrecto.academy.java.courseapp.persistence.CourseRepository;
 import com.attrecto.academy.java.courseapp.persistence.UserRepository;
 import com.attrecto.academy.java.courseapp.service.util.ServiceUtil;
 
 @Service
 public class UserService {
 	private UserRepository userRepository;
+	private CourseRepository courseRepository;
 	private ServiceUtil serviceUtil;
 
 	@Autowired
-	public UserService(final UserRepository userRepository, final ServiceUtil serviceUtil) {
+	public UserService(final UserRepository userRepository, final CourseRepository courseRepository, final ServiceUtil serviceUtil) {
 		this.userRepository = userRepository;
+		this.courseRepository = courseRepository;
 		this.serviceUtil = serviceUtil;
 	}
 
 	public List<UserDto> listUsers() {
-		List<User> users = userRepository.findAll();
-		List<UserDto> userDtos = users.stream().map(user -> {
-			List<MinimalCourseDto> minimalCoursesDto = serviceUtil.listUserCourses(user);
-
-			UserDto userDto = new UserDto();
-			userDto.setId(user.getId());
-			userDto.setName(user.getName());
-			userDto.setEmail(user.getEmail());
-			userDto.setCourses(minimalCoursesDto);
-			return userDto;
-		}).collect(Collectors.toList());
-
-		return userDtos;
+		return userRepository.findAll().stream().map(UserMapper::map).collect(Collectors.toList());
 	}
 
 	public UserDto getUserById(final int id) {
-		User user = serviceUtil.findUserById(id);
-
-		UserDto userDto = new UserDto();
-		userDto.setId(id);
-		userDto.setName(user.getName());
-		userDto.setEmail(user.getEmail());
-		userDto.setCourses(serviceUtil.listUserCourses(user));
-
-		return userDto;
+		return UserMapper.map(serviceUtil.findUserById(id));
 	}
-	
-    public List<UserDto> listUsersByName(@PathVariable final Integer id, @PathVariable final String filter) {
-    	List<User> users = userRepository.findAll();
-    	//List<User> users = serviceUtil.listUsersByName(id,filter);
-    	List<UserDto> userDtos = users.stream().map(user -> {
-			List<MinimalCourseDto> minimalCoursesDto = serviceUtil.listUserCourses(user);
-			if(user.getName().contains(filter.toLowerCase())) {
-			UserDto userDto = new UserDto();
-			userDto.setId(user.getId());
-			userDto.setName(user.getName());
-			userDto.setEmail(user.getEmail());
-			userDto.setCourses(minimalCoursesDto);
-			return userDto;}
-			return null;
-		}).collect(Collectors.toList());
-		
-		return userDtos;
-    }
-
-
 
 	public UserDto updateUser(int id, UpdateUserDto updateUserDto) {
-		List<Course> courses = updateUserDto.getCourses().stream()
-				.map(courseId -> serviceUtil.findCourseById(courseId)).collect(Collectors.toList());
+		Set<Course> courses = updateUserDto.getCourses().stream()
+				.map(courseId -> serviceUtil.findCourseById(courseId)).collect(Collectors.toSet());
 
-		User user = serviceUtil.findUserById(id);
+		final User user = serviceUtil.findUserById(id);
 		user.setName(updateUserDto.getName());
 		user.setEmail(updateUserDto.getEmail());
 		user.setPassword(updateUserDto.getPassword());
 		user.setRole(updateUserDto.getRole());
 		user.setCourses(courses);
-		userRepository.save(user);
-
-		UserDto userDto = new UserDto();
-		userDto.setId(id);
-		userDto.setName(updateUserDto.getName());
-		userDto.setEmail(updateUserDto.getEmail());
-		userDto.setCourses(user.getCourses().stream().map(course -> {
-			MinimalCourseDto minimalCourseDto = new MinimalCourseDto();
-			minimalCourseDto.setId(course.getId());
-			minimalCourseDto.setTitle(course.getTitle());
-			minimalCourseDto.setUrl(course.getUrl());
-			minimalCourseDto.setDescription(course.getDescription());
-			return minimalCourseDto;
-		}).collect(Collectors.toList()));
-
-		return userDto;
+		final User updatedUser = userRepository.save(user);
+		
+		courseRepository.findAll().forEach(course -> {
+			if(courses.contains(course)) {
+				course.getStudents().add(user);				
+			} else {
+				course.getStudents().remove(user);
+			}
+			
+			courseRepository.save(course);
+		});
+		
+		return UserMapper.map(updatedUser);
 	}
 
 	public UserDto createUser(CreateUserDto createUserDto) {
@@ -110,17 +70,11 @@ public class UserService {
 		user.setName(createUserDto.getName());
 		user.setPassword(createUserDto.getPassword());
 		user.setEmail(createUserDto.getEmail());
-		user.setRole(Role.USER.name());
-		user.setCourses(new ArrayList<>());
-
+		user.setRole(Role.USER);
+		user.setCourses(new HashSet<>());
 		user = userRepository.save(user);
 
-		final UserDto userDto = new UserDto();
-		userDto.setId(user.getId());
-		userDto.setName(user.getName());
-		userDto.setEmail(user.getEmail());
-
-		return userDto;
+		return UserMapper.map(user);
 	}
 
 	public void deleteUser(final int id) {

@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.attrecto.academy.java.courseapp.mapper.CourseMapper;
 import com.attrecto.academy.java.courseapp.model.Course;
 import com.attrecto.academy.java.courseapp.model.dto.CourseDto;
 import com.attrecto.academy.java.courseapp.model.dto.CreateCourseDto;
-import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
 import com.attrecto.academy.java.courseapp.persistence.CourseRepository;
 import com.attrecto.academy.java.courseapp.service.util.ServiceUtil;
 
@@ -24,59 +24,23 @@ public class CourseService {
 
 	public List<CourseDto> listAllCourses() {
 		List<Course> courses = courseRepository.findAll();
-		return courses.stream().map(course -> {
-			CourseDto courseDto = new CourseDto();
-			courseDto.setStudents(course.getStudents().stream().map(student -> {
-				MinimalUserDto minimalUserDto = new MinimalUserDto();
-				minimalUserDto.setId(student.getId());
-				minimalUserDto.setName(student.getName());
-				minimalUserDto.setEmail(student.getEmail());
-				return minimalUserDto;
-			}).collect(Collectors.toList()));
-
-			return courseDto;
-		}).collect(Collectors.toList());
+		return courses.stream().map(CourseMapper::map).collect(Collectors.toList());
 	}
 
 	public CourseDto getCourseById(int id) {
-		Course course = serviceUtil.findCourseById(id);
-		CourseDto courseDto = new CourseDto();
-		courseDto.setStudents(course.getStudents().stream().map(user -> {
-			MinimalUserDto minimalUserDto = new MinimalUserDto();
-			minimalUserDto.setId(user.getId());
-			minimalUserDto.setName(user.getName());
-			minimalUserDto.setEmail(user.getEmail());
-			return minimalUserDto;
-		}).collect(Collectors.toList()));
-		return courseDto;
+		return CourseMapper.map(serviceUtil.findCourseById(id));
 	}
 
 	public CourseDto createCourse(CreateCourseDto createCourseDto) {
-		Course course = new Course();
+		final Course course = new Course();
 		course.setTitle(createCourseDto.getTitle());
 		course.setDescription(createCourseDto.getDescription());
 		course.setUrl(createCourseDto.getUrl());
-		course.setAuthorId(serviceUtil.findUserById(createCourseDto.getAuthorId()).getId());
-		course.setStudents(createCourseDto.getStudentIds().stream()
-				.map(studentId -> serviceUtil.findUserById(studentId)).collect(Collectors.toList()));
+		course.setAuthor(serviceUtil.findUserById(createCourseDto.getAuthorId()));
+		course.setStudents(createCourseDto.getStudentIds().stream().map(userId -> serviceUtil.findUserById(userId))
+				.collect(Collectors.toSet()));
 
-		course = courseRepository.save(course);
-		
-		CourseDto courseDto = new CourseDto();
-		courseDto.setId(course.getId());
-		courseDto.setTitle(course.getTitle());
-		courseDto.setDescription(course.getDescription());
-		courseDto.setUrl(course.getUrl());
-		courseDto.setAuthorId(course.getAuthorId());
-		courseDto.setStudents(course.getStudents().stream().map(student -> {
-			MinimalUserDto minimalUserDto = new MinimalUserDto();
-			minimalUserDto.setId(student.getId());
-			minimalUserDto.setName(student.getName());
-			minimalUserDto.setEmail(student.getEmail());
-			return minimalUserDto;
-		}).collect(Collectors.toList()));
-		
-		return courseDto;
+		return CourseMapper.map(courseRepository.save(course));
 	}
 
 	public CourseDto updateCourse(final int id, CreateCourseDto updateCourseDto) {
@@ -84,24 +48,11 @@ public class CourseService {
 		course.setDescription(updateCourseDto.getDescription());
 		course.setTitle(updateCourseDto.getTitle());
 		course.setUrl(updateCourseDto.getUrl());
+		course.setAuthor(serviceUtil.findUserById(updateCourseDto.getAuthorId()));
+		course.setStudents(updateCourseDto.getStudentIds().stream().map(userId -> serviceUtil.findUserById(userId))
+				.collect(Collectors.toSet()));
 
-		course = courseRepository.save(course);
-		
-		CourseDto courseDto = new CourseDto();
-		courseDto.setId(course.getId());
-		courseDto.setTitle(course.getTitle());
-		courseDto.setDescription(course.getDescription());
-		courseDto.setUrl(course.getUrl());
-		courseDto.setAuthorId(course.getAuthorId());
-		courseDto.setStudents(course.getStudents().stream().map(student -> {
-			MinimalUserDto minimalUserDto = new MinimalUserDto();
-			minimalUserDto.setId(student.getId());
-			minimalUserDto.setName(student.getName());
-			minimalUserDto.setEmail(student.getEmail());
-			return minimalUserDto;
-		}).collect(Collectors.toList()));
-		
-		return courseDto;
+		return CourseMapper.map(courseRepository.save(course));
 	}
 
 	public void deleteCourse(int id) {

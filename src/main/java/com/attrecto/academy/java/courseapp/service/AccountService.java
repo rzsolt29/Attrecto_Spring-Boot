@@ -7,19 +7,15 @@ import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
 
 @Service
 public class AccountService {
-
-	public String generateJwtToken(LoginDto loginDto) {
-		// TODO Auto-generated method stub
-		return "test";
+	public String generateJwtToken(final LoginDto loginDto) {
+		return "";
 	}
-
+	
 	public MinimalUserDto getLoggedUser() {
-		MinimalUserDto dto=new MinimalUserDto();
-		dto.setId(1);
-		dto.setName("user");
-		dto.setEmail("usertestemail@attrecto.com");
-		
-		return dto;
+		MinimalUserDto minimalUserDto = new MinimalUserDto();
+		minimalUserDto.setId(1);
+		minimalUserDto.setName("mockUser");
+		minimalUserDto.setEmail("mockUser@email.com");
+		return minimalUserDto;
 	}
-
 }
