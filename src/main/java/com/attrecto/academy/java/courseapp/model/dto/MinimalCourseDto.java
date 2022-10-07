@@ -17,6 +17,8 @@ public class MinimalCourseDto {
 	@NotBlank
 	@Schema(description = "URL for the course", example = "https://attrecto.com/academy/course/java")	
 	private String url;
+	private String startingDate;
+	private String endingDate;
 	
 	public int getId() {
 		return id;
@@ -41,5 +43,17 @@ public class MinimalCourseDto {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public String getStartingDate() {
+		return startingDate;
+	}
+	public void setStartingDate(String startingDate) {
+		this.startingDate = startingDate;
+	}
+	public String getEndingDate() {
+		return endingDate;
+	}
+	public void setEndingDate(String endingDate) {
+		this.endingDate = endingDate;
 	}
 }

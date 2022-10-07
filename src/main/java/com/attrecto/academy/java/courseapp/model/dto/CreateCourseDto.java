@@ -22,6 +22,12 @@ public class CreateCourseDto {
 	@NotBlank
 	@Schema(description = "URL for the course", example = "https://attrecto.com/academy/course/java")	
 	private String url;
+	@NotBlank
+	@Schema(description = "Starting time of the course", example = "2022.01.01.")
+	private String startingDate;
+	@NotBlank
+	@Schema(description = "Ending time of the course", example = "2022.01.01.")
+	private String endingDate;
 	@NotNull
 	@Schema(description = "Id of the of the course author", example = "1")	
 	private Integer authorId;
@@ -44,6 +50,18 @@ public class CreateCourseDto {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public String getStartingDate() {
+		return startingDate;
+	}
+	public void setStartingDate(String startingDate) {
+		this.startingDate = startingDate;
+	}
+	public String getEndingDate() {
+		return endingDate;
+	}
+	public void setEndingDate(String endingDate) {
+		this.endingDate = endingDate;
 	}
 	public Integer getAuthorId() {
 		return authorId;

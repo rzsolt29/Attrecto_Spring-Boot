@@ -55,6 +55,8 @@ public class CourseServiceTest {
 		firstTestCourse.setDescription("First course");
 		firstTestCourse.setTitle("Test course");
 		firstTestCourse.setUrl("https://randomurl.com");
+		firstTestCourse.setStartingDate("2022.01.01");
+		firstTestCourse.setEndingDate("2022.02.01");
 		firstTestCourse.setStudents(Sets.newHashSet(firstTestUser, secondTestUser));
 		
 		secondTestCourse = new Course();
@@ -63,6 +65,8 @@ public class CourseServiceTest {
 		secondTestCourse.setDescription("Second course");
 		secondTestCourse.setTitle("Test course");
 		secondTestCourse.setUrl("https://randomurl.com");
+		secondTestCourse.setStartingDate("2022.10.01");
+		secondTestCourse.setEndingDate("2022.11.01");
 		secondTestCourse.setStudents(Sets.newHashSet(secondTestUser));
 	}
 
@@ -80,6 +84,8 @@ public class CourseServiceTest {
 		assertEquals(firstCourse.getDescription(), firstTestCourse.getDescription());
 		assertEquals(firstCourse.getTitle(), firstTestCourse.getTitle());
 		assertEquals(firstCourse.getUrl(), firstTestCourse.getUrl());
+		assertEquals(firstCourse.getStartingDate(), firstTestCourse.getStartingDate());
+		assertEquals(firstCourse.getEndingDate(), firstTestCourse.getEndingDate());
 		assertEquals(firstCourse.getStudents().size(), 2);
 
 		assertEquals(secondCourse.getId(), secondTestCourse.getId());
@@ -87,6 +93,8 @@ public class CourseServiceTest {
 		assertEquals(secondCourse.getDescription(), secondTestCourse.getDescription());
 		assertEquals(secondCourse.getTitle(), secondTestCourse.getTitle());
 		assertEquals(secondCourse.getUrl(), secondTestCourse.getUrl());
+		assertEquals(secondCourse.getStartingDate(), secondTestCourse.getStartingDate());
+		assertEquals(secondCourse.getEndingDate(), secondTestCourse.getEndingDate());
 		assertEquals(secondCourse.getStudents().size(), 1);
 	}
 }

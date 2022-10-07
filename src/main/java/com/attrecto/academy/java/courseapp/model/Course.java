@@ -25,6 +25,8 @@ public class Course {
 	@ManyToMany
 	@JoinTable(name = "COURSE_STUDENTS", joinColumns = @JoinColumn(name = "COURSE_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
 	private Set<User> students = new HashSet<>();
+	private String startingDate;
+	private String endingDate;
 
 	public Integer getId() {
 		return id;
@@ -73,4 +75,22 @@ public class Course {
 	public void setStudents(Set<User> students) {
 		this.students = students;
 	}
+
+	public String getStartingDate() {
+		return startingDate;
+	}
+
+	public void setStartingDate(String startingDate) {
+		this.startingDate = startingDate;
+	}
+
+	public String getEndingDate() {
+		return endingDate;
+	}
+
+	public void setEndingDate(String endingDate) {
+		this.endingDate = endingDate;
+	}
+	
+	
 }
