@@ -33,7 +33,7 @@ public class UserService {
 		this.serviceUtil = serviceUtil;
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public List<UserDto> listUsers() {
 		return userRepository.findAll().stream().map(UserMapper::map).collect(Collectors.toList());
 	}

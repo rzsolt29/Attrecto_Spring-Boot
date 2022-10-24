@@ -21,6 +21,7 @@ public class UserMapper {
 		userDto.setId(user.getId());
 		userDto.setName(user.getName());
 		userDto.setEmail(user.getEmail());
+		userDto.setRole(user.getRole());
 		userDto.setCourses(user.getCourses().stream().map(CourseMapper::mapToMinimal).collect(Collectors.toSet()));
 		
 		return userDto;

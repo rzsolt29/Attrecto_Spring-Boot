@@ -14,8 +14,6 @@ public class CourseMapper {
 		minimalCourseDto.setDescription(course.getDescription());
 		minimalCourseDto.setTitle(course.getTitle());
 		minimalCourseDto.setUrl(course.getUrl());
-		minimalCourseDto.setStartingDate(course.getStartingDate());
-		minimalCourseDto.setEndingDate(course.getEndingDate());
 		
 		return minimalCourseDto;
 	}
@@ -26,9 +24,7 @@ public class CourseMapper {
 		courseDto.setDescription(course.getDescription());
 		courseDto.setTitle(course.getTitle());
 		courseDto.setUrl(course.getUrl());
-		courseDto.setStartingDate(course.getStartingDate());
-		courseDto.setEndingDate(course.getEndingDate());
-		courseDto.setAuthorId(course.getAuthor().getId());
+		courseDto.setAuthor(UserMapper.map(course.getAuthor()));
 		courseDto.setStudents(course.getStudents().stream().map(UserMapper::map).collect(Collectors.toSet()));
 		
 		return courseDto;

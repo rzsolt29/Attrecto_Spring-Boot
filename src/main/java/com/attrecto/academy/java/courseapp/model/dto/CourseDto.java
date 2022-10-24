@@ -10,16 +10,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema
 public class CourseDto extends MinimalCourseDto {
 	@NotBlank
-	@Schema(description = "Id of the course author", example = "1")	
-	private Integer authorId;
+	@Schema(description = "The course author", example = "user")	
+	private MinimalUserDto author;
 	@Schema(description = "List of the course users", example = "user, admin")	
 	private Set<MinimalUserDto> students = new HashSet<>();
 
-	public Integer getAuthorId() {
-		return authorId;
+	
+	public MinimalUserDto getAuthor() {
+		return author;
 	}
-	public void setAuthorId(Integer authorId) {
-		this.authorId = authorId;
+	public void setAuthor(MinimalUserDto author) {
+		this.author = author;
 	}
 	public Set<MinimalUserDto> getStudents() {
 		return students;

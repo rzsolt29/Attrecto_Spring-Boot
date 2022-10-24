@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attrecto.academy.java.courseapp.model.dto.LoginDto;
-import com.attrecto.academy.java.courseapp.model.dto.MinimalUserDto;
+import com.attrecto.academy.java.courseapp.model.dto.TokenDto;
+import com.attrecto.academy.java.courseapp.model.dto.UserDto;
 import com.attrecto.academy.java.courseapp.service.AccountService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -31,15 +31,15 @@ public class AccountController {
 	
     @GetMapping(value= "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Give back information about the logged user" ,security = {@SecurityRequirement(name = "token")})
-	public MinimalUserDto me() {
+    @Operation(summary = "Give back information about the logged user")
+	public UserDto me() {
 		return accountService.getLoggedUser();
 	}
 	
-    @PostMapping(value= "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value= "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Create a login token")
-	public String login(@RequestBody @Valid LoginDto loginDto) {
+	public TokenDto login(@RequestBody @Valid LoginDto loginDto) {
 		return accountService.generateJwtToken(loginDto);
 	}
 }
